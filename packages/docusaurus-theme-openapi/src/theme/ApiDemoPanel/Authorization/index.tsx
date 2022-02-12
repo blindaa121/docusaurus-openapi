@@ -72,11 +72,9 @@ function validateData(selectedAuth: Scheme[], data: AuthState["data"]) {
 
 function Authorization() {
   const [editing, setEditing] = useState(false);
-
   const data = useTypedSelector((state) => state.auth.data);
   const options = useTypedSelector((state) => state.auth.options);
   const selected = useTypedSelector((state) => state.auth.selected);
-
   const dispatch = useTypedDispatch();
 
   if (selected === undefined) {
@@ -84,7 +82,6 @@ function Authorization() {
   }
 
   const selectedAuth = options[selected];
-
   const authenticated = validateData(selectedAuth, data);
 
   const optionKeys = Object.keys(options);
@@ -162,6 +159,31 @@ function Authorization() {
                   />
                 </FormItem>
               </React.Fragment>
+            );
+          }
+
+          if (a.type === "apiKey") {
+            return (
+              <FormItem
+                key={selected + "-x-redlock-auth"}
+                label="x-redlock-auth"
+              >
+                <FormTextInput
+                  placeholder="Enter API Key"
+                  value={data[a.key].apiKey ?? ""}
+                  password
+                  onChange={(e) => {
+                    const value = e.target.value.trim();
+                    dispatch(
+                      setAuthData({
+                        scheme: a.key,
+                        key: "apiKey",
+                        value: value ? value : undefined,
+                      })
+                    );
+                  }}
+                />
+              </FormItem>
             );
           }
 
