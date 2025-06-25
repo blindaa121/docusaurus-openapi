@@ -5,7 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  * ========================================================================== */
 
-import React from "react";
+import React, { useState } from "react";
+
+import FloatingButton from "../FloatingButton";
 
 function colorForMethod(method: string) {
   switch (method.toLowerCase()) {
@@ -28,18 +30,30 @@ interface Props {
 }
 
 function MethodEndpoint({ method, path }: Props) {
+  const [copyText, setCopyText] = useState("Copy");
+
+  const handleCopy = () => {
+    setCopyText("Copied");
+    setTimeout(() => setCopyText("Copy"), 2000);
+    navigator.clipboard.writeText(
+      `${method.toUpperCase()} ${path.replace(/\{([a-z0-9-_]+)\}/gi, ":$1")}`
+    );
+  };
+
   return (
-    <pre
-      style={{
-        background: "var(--openapi-card-background-color)",
-        borderRadius: "var(--openapi-card-border-radius)",
-      }}
-    >
-      <span style={{ color: colorForMethod(method) }}>
-        {method.toUpperCase()}
-      </span>{" "}
-      <span>{path.replace(/{([a-z0-9-_]+)}/gi, ":$1")}</span>
-    </pre>
+    <FloatingButton label={copyText} onClick={handleCopy}>
+      <pre
+        style={{
+          background: "var(--openapi-card-background-color)",
+          borderRadius: "var(--openapi-card-border-radius)",
+        }}
+      >
+        <span style={{ color: colorForMethod(method) }}>
+          {method.toUpperCase()}
+        </span>{" "}
+        <span>{path.replace(/\{([a-z0-9-_]+)\}/gi, ":$1")}</span>
+      </pre>
+    </FloatingButton>
   );
 }
 
